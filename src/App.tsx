@@ -1,26 +1,61 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, {useEffect} from 'react';
 import './App.css';
+import Auth from "./store/auth";
+import AppStatus from "./store/appStatus";
+import {ErrorSnackbar} from "./components/ErrorSnackbar/ErrorSnackbar";
+import {Navigate, Route, Routes} from 'react-router-dom'
+import {Login, Menu} from '@mui/icons-material';
+import {AppBar, Button, CircularProgress, Container, LinearProgress, Toolbar, Typography} from "@mui/material";
+import IconButton from "@mui/material/IconButton";
+import {observable} from "mobx";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
 
-export default App;
+const App = observable(() => {
+
+        useEffect(() => {
+            Auth.initializeApp()
+        }, [])
+
+        if (!AppStatus.appStatus.isInitialized) {
+            return <div
+                style={{position: 'fixed', top: '30%', textAlign: 'center', width: '100%'}}>
+                <CircularProgress/>
+            </div>
+        }
+
+        const logOutHandler = () => {
+            Auth.logOut()
+        }
+
+
+        return (
+            <div className="App">
+                <ErrorSnackbar/>
+                <AppBar position="static">
+                    <Toolbar>
+                        <IconButton edge="start" color="inherit" aria-label="menu">
+                            <Menu/>
+                        </IconButton>
+                        <Typography variant="h6">
+                            News
+                        </Typography>
+                        {Auth.authState.isLoggedIn && <Button color="inherit" onClick={logOutHandler}>LogOut</Button>}
+
+                    </Toolbar>
+                    {AppStatus.appStatus.status === 'loading' && <LinearProgress/>}
+                </AppBar>
+                <Container fixed>
+                    <Routes>
+                        <Route path={'/'}/>
+                        <Route path={'login'} element={<Login/>}/>
+                        <Route path="/404" element={<h1>404: PAGE NOT FOUND</h1>}/>
+                        <Route path="*" element={<Navigate to={'/404'}/>}/>
+                    </Routes>
+                </Container>
+            </div>
+        );
+    }
+)
+
+export default App
+
