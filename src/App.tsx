@@ -4,13 +4,14 @@ import Auth from "./store/auth";
 import AppStatus from "./store/appStatus";
 import {ErrorSnackbar} from "./components/ErrorSnackbar/ErrorSnackbar";
 import {Navigate, Route, Routes} from 'react-router-dom'
-import {Login, Menu} from '@mui/icons-material';
+import {Menu} from '@mui/icons-material';
 import {AppBar, Button, CircularProgress, Container, LinearProgress, Toolbar, Typography} from "@mui/material";
 import IconButton from "@mui/material/IconButton";
-import {observable} from "mobx";
+import {TodolistsList} from "./toDoLists/ListOfToDoLists";
+import {Login} from "./LogInFlow/Login";
 
 
-const App = observable(() => {
+const App = () => {
 
         useEffect(() => {
             Auth.initializeApp()
@@ -46,7 +47,7 @@ const App = observable(() => {
                 </AppBar>
                 <Container fixed>
                     <Routes>
-                        <Route path={'/'}/>
+                        <Route path={'/'} element={<TodolistsList/>}/>
                         <Route path={'login'} element={<Login/>}/>
                         <Route path="/404" element={<h1>404: PAGE NOT FOUND</h1>}/>
                         <Route path="*" element={<Navigate to={'/404'}/>}/>
@@ -55,7 +56,7 @@ const App = observable(() => {
             </div>
         );
     }
-)
+
 
 export default App
 

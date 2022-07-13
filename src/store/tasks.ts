@@ -133,6 +133,10 @@ class Tasks {
             })
     }
 
+    changeTaskStatus() {
+
+    }
+
 }
 
 export default new Tasks()

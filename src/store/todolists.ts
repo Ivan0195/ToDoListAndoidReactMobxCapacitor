@@ -64,3 +64,5 @@ class ToDoLists {
             })
     }
 }
+
+export default new ToDoLists()
