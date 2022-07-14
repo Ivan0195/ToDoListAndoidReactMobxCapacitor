@@ -14,64 +14,60 @@ export type loginParamsType = {
     captcha?: string
 }
 
-class Auth {
+export const Auth = makeAutoObservable(
+    {
+        authState: {isLoggedIn: false} as authStateType,
 
-    authState = {isLoggedIn: false} as authStateType
+        logIn(data: loginParamsType) {
+            AppStatus.setAppStatus('loading')
+            authAPI.singIn(data)
+                .then(res => {
+                    if (res.data.resultCode === 0) {
+                        this.authState.isLoggedIn = true
+                        AppStatus.setAppStatus('succeeded')
+                    } else {
+                        handleServerAppError(res.data)
+                    }
+                })
+                .catch((err) => {
+                    AppStatus.setAppStatus('succeeded')
+                    handleServerNetworkError(err.data)
+                })
+        },
 
-    constructor() {
-        makeAutoObservable(this)
-    }
+        logOut() {
+            AppStatus.setAppStatus('loading')
+            authAPI.singOut()
+                .then(res => {
+                    if (res.data.resultCode === 0) {
+                        this.authState.isLoggedIn = false
+                        AppStatus.setAppStatus('succeeded')
+                    } else {
+                        handleServerAppError(res.data)
+                    }
+                })
+                .catch((err) => {
+                    AppStatus.setAppStatus('succeeded')
+                    handleServerNetworkError(err.data)
+                })
+        },
 
-    logIn(data: loginParamsType) {
-        AppStatus.setAppStatus('loading')
-        authAPI.singIn(data)
-            .then(res => {
+        initializeApp() {
+            AppStatus.setAppStatus('loading')
+            authAPI.me().then(res => {
                 if (res.data.resultCode === 0) {
-                    this.authState.isLoggedIn = true
+                    this.authState.isLoggedIn=true;
                     AppStatus.setAppStatus('succeeded')
                 } else {
                     handleServerAppError(res.data)
                 }
             })
-            .catch((err) => {
-                AppStatus.setAppStatus('succeeded')
-                handleServerNetworkError(err.data)
-            })
-    }
-
-    logOut() {
-        AppStatus.setAppStatus('loading')
-        authAPI.singOut()
-            .then(res => {
-                if (res.data.resultCode === 0) {
-                    this.authState.isLoggedIn = false
+                .catch((err) => {
                     AppStatus.setAppStatus('succeeded')
-                } else {
-                    handleServerAppError(res.data)
-                }
-            })
-            .catch((err) => {
-                AppStatus.setAppStatus('succeeded')
-                handleServerNetworkError(err.data)
-            })
+                    handleServerNetworkError(err.data)
+                })
+                .finally(() =>  AppStatus.setAppIsInitialized(true))
+        }
     }
+)
 
-    initializeApp() {
-        AppStatus.setAppStatus('loading')
-        authAPI.me().then(res => {
-            if (res.data.resultCode === 0) {
-                this.authState.isLoggedIn=true;
-                AppStatus.setAppStatus('succeeded')
-            } else {
-                handleServerAppError(res.data)
-            }
-        })
-            .catch((err) => {
-                AppStatus.setAppStatus('succeeded')
-                handleServerNetworkError(err.data)
-            })
-            .finally(() =>  AppStatus.setAppIsInitialized(true))
-    }
-}
-
-export default new Auth()

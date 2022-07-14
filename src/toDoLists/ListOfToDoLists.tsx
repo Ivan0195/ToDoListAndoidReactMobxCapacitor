@@ -2,21 +2,22 @@ import React, { useCallback, useEffect } from 'react'
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import {Navigate} from "react-router-dom";
-import Auth from "../store/auth";
 import Todolists, {FilterValuesType} from "../store/todolists";
-import tasks, {TaskStatuses} from "../store/tasks";
+import {TaskStatuses} from "../store/tasks";
 import Tasks from "../store/tasks";
-import {observer} from "mobx-react-lite";
 import { AddItemForm } from '../components/AddItemForm/AddItemForm';
-import { Todolist } from './ToDoList';
+import Todolist from './ToDoList';
+import {observer} from "mobx-react-lite";
+import {Auth} from "../store/auth";
+import ToDoLists from "../store/todolists";
 
 type PropsType = {
     demo?: boolean
 }
 
-export const TodolistsList: React.FC<PropsType> = ({demo = false}) => {
+const TodolistsList: React.FC<PropsType> = ({demo = false}) => {
 
-    const todolists = Todolists.toDoLists
+    const todolists = ToDoLists.toDoLists
     const tasks = Tasks.tasks
 
     useEffect(() => {
@@ -75,7 +76,6 @@ export const TodolistsList: React.FC<PropsType> = ({demo = false}) => {
                         <Paper style={{padding: '10px'}}>
                             <Todolist
                                 todolist={tl}
-                                //@ts-ignore
                                 tasks={allTodolistTasks}
                                 removeTask={removeTask}
                                 changeFilter={changeFilter}
@@ -93,3 +93,5 @@ export const TodolistsList: React.FC<PropsType> = ({demo = false}) => {
         </Grid>
     </>
 }
+
+export default observer(TodolistsList)

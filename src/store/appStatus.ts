@@ -7,28 +7,26 @@ export type AppStatusType = {
     isInitialized: boolean
 }
 
-class AppStatus {
-    appStatus = {
-        status: 'idle',
-        error: null,
-        isInitialized: true
-    } as AppStatusType
+export const AppStatus = makeAutoObservable(
+    {
+        appStatus: {
+            status: 'idle',
+            error: null,
+            isInitialized: true
+        } as AppStatusType,
 
-    constructor() {
-        makeAutoObservable(this)
+        setAppError(error: string | null){
+            this.appStatus.error = error
+        },
+
+        setAppStatus(status: RequestStatusType){
+            this.appStatus.status = status
+        },
+
+        setAppIsInitialized(isInitialized: boolean){
+            this.appStatus.isInitialized = isInitialized
+        }
     }
+)
 
-    setAppError(error: string | null){
-        this.appStatus.error = error
-    }
-
-    setAppStatus(status: RequestStatusType){
-        this.appStatus.status = status
-    }
-
-    setAppIsInitialized(isInitialized: boolean){
-        this.appStatus.isInitialized = isInitialized
-    }
-}
-
-export default new AppStatus()
+export default AppStatus

@@ -53,90 +53,85 @@ export type UpdateTaskModelType = {
     deadline: string
 }
 
-class Tasks {
+export const Tasks = makeAutoObservable(
+    {
 
-    tasks = {} as TasksStateType
+        tasks: {} as TasksStateType,
 
-    constructor() {
-        makeAutoObservable(this)
-    }
-
-    fetchTasks(todolistId: string){
-        AppStatus.setAppStatus('loading')
-        todolistsAPI.getTasks(todolistId)
-            .then((res) => {
-                //@ts-ignore
-                this.tasks = {...this.tasks, [todolistId]: res.data.items}
-                AppStatus.setAppStatus('succeeded')
-            })
-    }
-
-    addTask(title: string, todolistId: string) {
-        AppStatus.setAppStatus('loading')
-        todolistsAPI.createTask(todolistId, title)
-            .then(res => {
-                if (res.data.resultCode === 0) {
-                    //@ts-ignore
-                    this.tasks = {
-                        ...this.tasks,
-                        [res.data.data.item.todoListId]: [res.data.data.item, ...this.tasks[res.data.data.item.todoListId]]
-                    }
+        fetchTasks(todolistId: string){
+            AppStatus.setAppStatus('loading')
+            todolistsAPI.getTasks(todolistId)
+                .then((res) => {
+                    this.tasks = {...this.tasks, [todolistId]: res.data.items}
                     AppStatus.setAppStatus('succeeded')
-                } else {
-                    handleServerAppError(res.data);
-                }
-            })
-            .catch((error) => {
-                handleServerNetworkError(error)
-            })
-    }
+                })
+        },
 
-    removeTask(taskId: string, todolistId: string) {
-                todolistsAPI.deleteTask(todolistId, taskId)
-            .then(res => {
-                this.tasks = {...this.tasks, [todolistId]: this.tasks[todolistId].filter(t => t.id !== taskId)}
-            })
-    }
-
-    updateTask(taskId: string, domainModel: UpdateDomainTaskModelType, todolistId: string) {
-        const task = this.tasks[todolistId].find(t => t.id === taskId)
-        if (!task) {
-            console.warn('task not found in the state')
-            return
-        }
-
-        const apiModel: UpdateTaskModelType = {
-            deadline: task.deadline,
-            description: task.description,
-            priority: task.priority,
-            startDate: task.startDate,
-            title: task.title,
-            status: task.status,
-            ...domainModel
-        }
-
-        //@ts-ignore
-        todolistsAPI.updateTask(todolistId, taskId, apiModel)
-            .then(res => {
-                if (res.data.resultCode === 0) {
-                    this.tasks = {
-                        ...this.tasks,
-                        [todolistId]: this.tasks[todolistId]
-                            .map(t => t.id === taskId ? {...t, ...apiModel} : t)
+        addTask(title: string, todolistId: string) {
+            AppStatus.setAppStatus('loading')
+            todolistsAPI.createTask(todolistId, title)
+                .then(res => {
+                    if (res.data.resultCode === 0) {
+                        this.tasks = {
+                            ...this.tasks,
+                            [res.data.data.item.todoListId]: [res.data.data.item, ...this.tasks[res.data.data.item.todoListId]]
+                        }
+                        AppStatus.setAppStatus('succeeded')
+                    } else {
+                        handleServerAppError(res.data);
                     }
-                } else {
-                    handleServerAppError(res.data);
-                }
-            })
-            .catch((error) => {
-                handleServerNetworkError(error);
-            })
+                })
+                .catch((error) => {
+                    handleServerNetworkError(error)
+                })
+        },
+
+        removeTask(taskId: string, todolistId: string) {
+            todolistsAPI.deleteTask(todolistId, taskId)
+                .then(res => {
+                    this.tasks = {...this.tasks, [todolistId]: this.tasks[todolistId].filter(t => t.id !== taskId)}
+                })
+        },
+
+        updateTask(taskId: string, domainModel: UpdateDomainTaskModelType, todolistId: string) {
+            const task = this.tasks[todolistId].find(t => t.id === taskId)
+            if (!task) {
+                console.warn('task not found in the state')
+                return
+            }
+
+            const apiModel: UpdateTaskModelType = {
+                deadline: task.deadline,
+                description: task.description,
+                priority: task.priority,
+                startDate: task.startDate,
+                title: task.title,
+                status: task.status,
+                ...domainModel
+            }
+
+            todolistsAPI.updateTask(todolistId, taskId, apiModel)
+                .then(res => {
+                    if (res.data.resultCode === 0) {
+                        this.tasks = {
+                            ...this.tasks,
+                            [todolistId]: this.tasks[todolistId]
+                                .map(t => t.id === taskId ? {...t, ...apiModel} : t)
+                        }
+                    } else {
+                        handleServerAppError(res.data);
+                    }
+                })
+                .catch((error) => {
+                    handleServerNetworkError(error);
+                })
+        },
+
+        changeTaskStatus() {
+
+        }
+
     }
+)
 
-    changeTaskStatus() {
-
-    }
-
-}
-
-export default new Tasks()
+export default Tasks

@@ -1,9 +1,11 @@
 import React, {ChangeEvent, useCallback} from 'react'
-import { Delete } from '@mui/icons-material';
+import {Delete} from '@mui/icons-material';
 import IconButton from '@mui/material/IconButton';
 import Checkbox from '@mui/material/Checkbox';
-import { EditableSpan } from '../components/EditableSpan/EditableSpan';
-import {TaskStatuses, TaskType} from "../api/todolists-api";
+import {EditableSpan} from '../components/EditableSpan/EditableSpan';
+import {TaskStatuses} from "../api/todolists-api";
+import {TaskType} from "../store/tasks";
+import {observer} from "mobx-react-lite";
 
 type TaskPropsType = {
     task: TaskType
@@ -12,7 +14,7 @@ type TaskPropsType = {
     changeTaskTitle: (taskId: string, newTitle: string, todolistId: string) => void
     removeTask: (taskId: string, todolistId: string) => void
 }
-export const Task = React.memo((props: TaskPropsType) => {
+const Task = (props: TaskPropsType) => {
     const onClickHandler = useCallback(() => props.removeTask(props.task.id, props.todolistId), [props.task.id, props.todolistId]);
 
     const onChangeHandler = useCallback((e: ChangeEvent<HTMLInputElement>) => {
@@ -36,4 +38,6 @@ export const Task = React.memo((props: TaskPropsType) => {
             <Delete/>
         </IconButton>
     </div>
-})
+}
+
+export default observer(Task)

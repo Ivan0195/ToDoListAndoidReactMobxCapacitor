@@ -5,9 +5,10 @@ import { Delete } from '@mui/icons-material';
 import {EditableSpan} from "../components/EditableSpan/EditableSpan";
 import {FilterValuesType, TodolistDomainType} from "../store/todolists";
 import {AddItemForm} from "../components/AddItemForm/AddItemForm";
-import {TaskStatuses, TaskType} from "../api/todolists-api";
-import Tasks from "../store/tasks";
-import {Task} from "./Tasks";
+import {TaskStatuses} from "../api/todolists-api";
+import Tasks, {TaskType} from "../store/tasks";
+import Task from "./Tasks";
+import {observer} from "mobx-react-lite";
 
 
 type PropsType = {
@@ -23,7 +24,7 @@ type PropsType = {
     demo?: boolean
 }
 
-export const Todolist = React.memo(function ({demo = false, ...props}: PropsType) {
+const Todolist = ({demo = false, ...props}: PropsType) => {
     console.log('Todolist called')
 
     useEffect(() => {
@@ -90,6 +91,6 @@ export const Todolist = React.memo(function ({demo = false, ...props}: PropsType
             </Button>
         </div>
     </div>
-})
+}
 
-
+export default observer(Todolist)

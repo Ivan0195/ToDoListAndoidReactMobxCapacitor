@@ -9,7 +9,7 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import {Navigate} from 'react-router-dom'
 import {useFormik} from "formik";
-import Auth from "../store/auth";
+import {Auth} from "../store/auth";
 import {observer} from "mobx-react-lite";
 
 type FormikErrorType = {
@@ -18,7 +18,7 @@ type FormikErrorType = {
     rememberMe?: boolean
 }
 
-export const Login = () => {
+const Login = () => {
 
 
     const formik = useFormik({
@@ -89,3 +89,5 @@ export const Login = () => {
         </Grid>
     </Grid>
 }
+
+export default observer(Login)

@@ -1,17 +1,18 @@
 import React, {useEffect} from 'react';
 import './App.css';
-import Auth from "./store/auth";
 import AppStatus from "./store/appStatus";
 import {ErrorSnackbar} from "./components/ErrorSnackbar/ErrorSnackbar";
 import {Navigate, Route, Routes} from 'react-router-dom'
 import {Menu} from '@mui/icons-material';
 import {AppBar, Button, CircularProgress, Container, LinearProgress, Toolbar, Typography} from "@mui/material";
 import IconButton from "@mui/material/IconButton";
-import {TodolistsList} from "./toDoLists/ListOfToDoLists";
-import {Login} from "./LogInFlow/Login";
+import TodolistsList from "./toDoLists/ListOfToDoLists";
+import Login from "./LogInFlow/Login";
+import {observer} from "mobx-react-lite";
+import {Auth} from "./store/auth";
 
 
-const App = () => {
+const App = observer( () => {
 
         useEffect(() => {
             Auth.initializeApp()
@@ -55,7 +56,7 @@ const App = () => {
                 </Container>
             </div>
         );
-    }
+    })
 
 
 export default App
